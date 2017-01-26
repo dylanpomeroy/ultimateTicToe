@@ -1,44 +1,19 @@
 <html>
-  <head>
-    <style>
-      table {
-        width: 100%;
-        height: 100%;
-      }
-      td {
-        border: 1px solid black;
-      }
-      td:nth-child(1){
-        border-left: none;
-      }
-      td:nth-child(3){
-        border-right: none;
-      }
-      tr:nth-child(1) td {
-        border-top: none;
-      }
-      tr:nth-child(3) td {
-        border-bottom: none;
-      }
-    </style>
-  </head>
-  <body>
-    <table id="main">
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-    </table>
-  </body>
-</html>
+<script>
+  var cssHtml = '<script>';
+  cssHtml += 'td { border: 1px solid black; }';
+  cssHtml += '</script>';
+
+  var tableHtml = '';
+
+  tableHtml += '<table id="main">';
+  for (var i = 0; i < 3; i++){
+    tableHtml += '<tr>';
+    for (var j = 0; j < 3; j++){
+      tableHtml += '<th></th>';
+    }
+    tableHtml += '</tr>';
+  }
+
+  document.write(cssHtml + tableHtml);
+</script>
