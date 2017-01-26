@@ -1,19 +1,45 @@
+<!DOCTYPE html>
 <html>
-<script>
-  var cssHtml = '<script>';
-  cssHtml += 'td { border: 1px solid black; }';
-  cssHtml += '</script>';
+  <head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+  </head>
+  <body>
+    <div id='everything'></div>
+    <script>
+      var turn = 'x';
 
-  var tableHtml = '';
+      var everything = document.getElementById('everything');
 
-  tableHtml += '<table id="main">';
-  for (var i = 0; i < 3; i++){
-    tableHtml += '<tr>';
-    for (var j = 0; j < 3; j++){
-      tableHtml += '<th></th>';
-    }
-    tableHtml += '</tr>';
-  }
+      // create table
+      var tableHtml = '<table>';
+      for (var i = 0; i < 3; i++){
+        tableHtml += '<tr>\n';
+        for (var j = 0; j < 3; j++){
+          tableHtml += '<td><table>'
+          for (var k = 0; k < 3; k++){
+            tableHtml += '<tr>';
+            for (var l = 0; l < 3; l++){
+              tableHtml += '<td>';
+              var id = i+'x'+j+':'+k+'x'+l;
+              tableHtml += '<button id="'+id+'" onclick="btnPress(\''+id+'\')"/>';
+              tableHtml += '</td>';
+            }
+            tableHtml += '</tr>';
+          }
+          tableHtml += '</table></td>';
+        }
+        tableHtml += '</tr>';
+      }
+      tableHtml += "</table>";
 
-  document.write(cssHtml + tableHtml);
-</script>
+      everything.innerHTML = tableHtml;
+
+      function btnPress(id){
+        document.getElementById(id).style.backgroundImage = 'url("images/x.png")';
+        if (turn == 'x') turn = 'o';
+        else turn = 'x';
+
+      }
+    </script>
+  </body>
+</html>
