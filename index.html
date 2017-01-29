@@ -7,21 +7,45 @@
     <div id='everything'></div>
     <script>
       var turn = 'x';
+      var move = 0;
+      var allowedBigBox = 'anywhere';
+      var bigBoxHighlighted = false;
+      var claimedSpots = [];
+      for (var a = 0; a < 81; a++)
+        claimedSpots[a] = 0;
+      var idIndex = 0;
+      var mainTableIndex = 0;
+      var winSequences = [
+        // horizontal wins
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        // vertical wins
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        // diagonal wins
+        [0, 4, 8],
+        [2, 4, 6]
+      ];
+      var wonBoxes = [];
 
       var everything = document.getElementById('everything');
+
+
 
       // create table
       var tableHtml = '<table>';
       for (var i = 0; i < 3; i++){
         tableHtml += '<tr>\n';
         for (var j = 0; j < 3; j++){
-          tableHtml += '<td><table>'
+          tableHtml += '<td class="bigBox" id="bigBox'+idIndex+'"><table>'
           for (var k = 0; k < 3; k++){
             tableHtml += '<tr>';
             for (var l = 0; l < 3; l++){
               tableHtml += '<td>';
-              var id = i+'x'+j+':'+k+'x'+l;
-              tableHtml += '<button id="'+id+'" onclick="btnPress(\''+id+'\')"/>';
+              tableHtml += '<button id="'+idIndex+'" onclick="btnPress(\''+idIndex+'\')"/>';
+              idIndex++;
               tableHtml += '</td>';
             }
             tableHtml += '</tr>';
@@ -35,10 +59,76 @@
       everything.innerHTML = tableHtml;
 
       function btnPress(id){
-        document.getElementById(id).style.backgroundImage = 'url("images/x.png")';
-        if (turn == 'x') turn = 'o';
-        else turn = 'x';
+        // check to see if move is allowed
+        if (allowedBigBox != 'anywhere'){
+          if (Math.abs(id - allowedBigBox) > 10){
+            setButtonAreaColor('yellow');
+            bigBoxHighlighted = true;
+            return;
+          }
+          else {
+            setButtonAreaColor('white');
+            bigBoxHighlighted = false;
+          }
+        }
 
+
+
+        // move is valid
+        move++;
+        document.getElementById(id).style.backgroundImage = 'url("images/'+ turn +'.png")';
+
+        claimedSpots[id] = turn;
+        // check if a box was won by this move
+        if (checkForBoxWin(turn)) checkForGameWin(turn);
+
+        // define allowed box for next turn
+        allowedBigBox = (parseInt(id) % 9) * 9;
+        if (wonBoxes[Math.floor(allowedBigBox / 9)] != null){
+          // the next play can be anywhere
+          allowedBigBox = 'anywhere';
+        }
+
+        // switch to other player
+        if (move % 2 == 0) turn = 'x';
+        else turn = 'o';
+
+      }
+
+      function setButtonAreaColor(color){
+        for (var z = allowedBigBox; z < allowedBigBox + 9; z++){
+          document.getElementById(z).style.backgroundColor = color;
+        }
+      }
+
+      function checkForBoxWin(player){
+        for (var a = 0; a < 8; a++){
+          var wS0 = winSequences[a][0] + allowedBigBox;
+          var wS1 = winSequences[a][1] + allowedBigBox;
+          var wS2 = winSequences[a][2] + allowedBigBox;
+          //alert(wS0 + "," + wS1 + "," + wS2);
+          if (claimedSpots[wS0] == player
+            && claimedSpots[wS1] == player
+            && claimedSpots[wS2] == player){
+              // it's a win for this square!
+
+              var imgTag = '<img src="images/'+player+'.png">';
+              document.getElementById("bigBox"+allowedBigBox).innerHTML = imgTag;
+              wonBoxes[Math.floor(allowedBigBox / 9)] = player;
+              return true;
+            }
+        }
+        return false;
+      }
+
+      function checkForGameWin(player){
+        for (var a = 0; a < 8; a++){
+          if (wonBoxes[winSequences[a][0]] == player
+            && wonBoxes[winSequences[a][1]] == player
+            && wonBoxes[winSequences[a][2]] == player){
+              alert('GAME OVER! '+player+' WINS!');
+            }
+        }
       }
     </script>
   </body>
